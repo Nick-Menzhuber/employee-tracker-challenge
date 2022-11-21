@@ -1,10 +1,8 @@
 //define module dependecies
 require('dotenv').config();
 const cTable = require('console.table');;
-
-
 const inquirer = require('inquirer');
-const mysql = require('mysql')
+const mysql = require('mysql2')
 
 const db = mysql.createConnection(
     {
@@ -24,7 +22,6 @@ const menu = [
         name: 'selection',
         message: 'Welcome to Employee Tracker! Where would you like to start?',
         choices: ['View All Departments', 'View All Roles', 'View All', 'Quit']
-
     }
 ]
 
@@ -44,14 +41,8 @@ function init() {
 }
 
 function quit() {
-    sequelize.end();
     process.exit();
-
 }
 
 //function to call inquirer
 init();
-
-mysql2.sync({ force: false }).then(() => {
-    app.listen(PORT, () => console.log('Now listening'));
-});
