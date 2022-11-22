@@ -20,7 +20,7 @@ const menu = [
     {
         type: 'list',
         name: 'selection',
-        message: 'Welcome to Employee Tracker! Where would you like to start?',
+        message: 'What would you like to do?',
         choices: ['View All Departments', 'View All Roles', 'View All', 'Quit']
     }
 ]
@@ -29,15 +29,46 @@ const menu = [
 //initializing inquirer
 function init() {
     inquirer
-    .prompt(menu)
-    .then(function (data) {
-        if (data.selection === 'Quit')
-        console.log(`User selected to ${data.selection}`);
-        quit();
+        .prompt(menu)
+        .then(function (data) {
+            if (data.selection === 'Quit') {
+                console.log(`User selected to ${data.selection}`);
+                quit();
+            } else if (data.selection === 'View All Departments') {
+                console.log(`User selected to ${data.selection}`);
+                viewAllDepts();
+            } else if (data.selection === 'View All Roles') {
+                console.log(`User selected to ${data.selection}`);
+                viewAllRoles();
+            } else if (data.selection === 'View All') {
+                console.log(`User selected to ${data.selection}`);
+                viewAll();
+            }
+        })
+        .catch(error => {
+            console.log("Error:", error)
+        })
+}
+
+function viewAllDepts() {
+    db.query('SELECT * FROM department', function (err, results) {
+        console.table(results);
+        init();
     })
-    .catch(error => {
-        console.log("Error:", error)
-      })    
+}
+
+function viewAllRoles() {
+    db.query('SELECT * FROM roles', function (err, results) {
+        console.table(results);
+        init();
+    })
+}
+
+function viewAll() {
+    db.query('SELECT * FROM employee', function (err, results) {
+        console.table(results);
+        init();
+    })
 }
 
 function quit() {
