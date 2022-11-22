@@ -4,6 +4,7 @@ require('console.table');
 const inquirer = require('inquirer');
 const mysql = require('mysql2')
 
+//sets up mysql connection using dotenv
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -15,18 +16,18 @@ const db = mysql.createConnection(
 );
 
 
-
+//defines menu of choices for user, home base for the app
 const menu = [
     {
         type: 'list',
         name: 'selection',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Update Employee Role', 'Quit']
     }
 ]
 
 
-//initializing inquirer
+//initializing inquirer and directing traffic based on user response to menu
 function init() {
     inquirer
         .prompt(menu)
@@ -49,6 +50,8 @@ function init() {
                 addRole();
             } else if (data.selection === 'Add an Employee') {
                 addEmployee();
+            } else if (data.selection === 'Update Employee Role') {
+                updateRole();
             }
         })
         .catch(error => {
@@ -56,6 +59,7 @@ function init() {
         })
 }
 
+//function to view all departments
 function viewAllDepts() {
     db.query('SELECT * FROM department', function (err, results) {
         if (err) console.log(err);
@@ -64,6 +68,7 @@ function viewAllDepts() {
     })
 }
 
+//function to view all roles
 function viewAllRoles() {
     db.query('SELECT r.id, r.title, d.dept, r.salary FROM roles r JOIN department d ON r.department_id = d.id', function (err, results) {
         if (err) console.log(err);
@@ -72,6 +77,7 @@ function viewAllRoles() {
     })
 }
 
+//function to view all employees
 function viewAllEmployees() {
     db.query('SELECT e.id, e.first_name, e.last_name, r.title, d.dept, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN roles r ON r.id = e.role_id JOIN department d ON r.department_id = d.id LEFT JOIN employee AS m ON e.manager_id = m.id', function (err, results) {
         if (err) console.log(err);
@@ -80,6 +86,7 @@ function viewAllEmployees() {
     })
 }
 
+//inquirer function to add a new department
 const addDept = () => {
     return inquirer
         .prompt([{
@@ -99,6 +106,7 @@ const addDept = () => {
         )
 }
 
+//inquirer function to add a new role
 const addRole = () => {
     return inquirer
         .prompt([{
@@ -128,6 +136,7 @@ const addRole = () => {
         )
 }
 
+//inquirer function to add a new employee
 const addEmployee = () => {
     return inquirer
         .prompt([{
@@ -162,6 +171,37 @@ const addEmployee = () => {
         )
 }
 
+//inquirer function to update employee role
+const updateRole = () => {
+    return inquirer
+        .prompt([{
+            type: 'input',
+            name: 'id',
+            message: 'Please enter the employee ID for the employee to be updated:'
+        },
+        {
+            type: 'input',
+            name: 'role_id',
+            message: 'Please enter the new role ID for the employee:'
+        },
+        {
+            type: 'input',
+            name: 'manager_id',
+            message: 'Please enter the manager ID for the updated employee:'
+        }
+        ])
+        .then(data => {
+            let query = `UPDATE employee SET role_id=${data.role_id}, manager_id=${data.manager_id} WHERE id=${data.id}`;
+            db.query(query, function (err, results) {
+                if (err) console.log(err);
+                console.log(`Okay, update complete`);
+                init();
+            })
+        }
+        )
+}
+
+//function to quit application
 function quit() {
     process.exit();
 }
