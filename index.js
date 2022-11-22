@@ -21,7 +21,7 @@ const menu = [
         type: 'list',
         name: 'selection',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Quit']
     }
 ]
 
@@ -45,6 +45,8 @@ function init() {
                 viewAllEmployees();
             } else if (data.selection === 'Add a Department') {
                 addDept();
+            } else if (data.selection === 'Add a Role') {
+                addRole();
             }
         })
         .catch(error => {
@@ -89,6 +91,35 @@ const addDept = () => {
             db.query(query, function (err, results) {
                 if (err) console.log(err);
                 console.log(`Okay, ${data.new_dept} has been added`);
+                init();
+            })
+        }
+        )
+}
+
+const addRole = () => {
+    return inquirer
+        .prompt([{
+            type: 'input',
+            name: 'new_role',
+            message: 'Please enter the name of the new role:'
+        },
+        {
+            type: 'input',
+            name: 'salary',
+            message: 'Please enter the salary for the new role:'
+        },
+        {
+            type: 'input',
+            name: 'dept_id',
+            message: 'Please enter the department ID for the new role:'
+        }
+        ])
+        .then(data => {
+            let query = `INSERT INTO roles (title, salary, department_id) VALUES ('${data.new_role}', '${data.salary}', '${data.dept_id}')`;
+            db.query(query, function (err, results) {
+                if (err) console.log(err);
+                console.log(`Okay, ${data.new_role} has been added`);
                 init();
             })
         }
