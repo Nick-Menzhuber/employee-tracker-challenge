@@ -21,7 +21,7 @@ const menu = [
         type: 'list',
         name: 'selection',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Quit']
     }
 ]
 
@@ -43,6 +43,8 @@ function init() {
             } else if (data.selection === 'View All Employees') {
                 console.log(`User selected to ${data.selection}`);
                 viewAllEmployees();
+            } else if (data.selection === 'Add a Department') {
+                addDept();
             }
         })
         .catch(error => {
@@ -52,6 +54,7 @@ function init() {
 
 function viewAllDepts() {
     db.query('SELECT * FROM department', function (err, results) {
+        if (err) console.log(err);
         console.table(results);
         init();
     })
@@ -59,6 +62,7 @@ function viewAllDepts() {
 
 function viewAllRoles() {
     db.query('SELECT r.id, r.title, d.dept, r.salary FROM roles r JOIN department d ON r.department_id = d.id', function (err, results) {
+        if (err) console.log(err);
         console.table(results);
         init();
     })
@@ -66,9 +70,29 @@ function viewAllRoles() {
 
 function viewAllEmployees() {
     db.query('SELECT e.id, e.first_name, e.last_name, r.title, d.dept, r.salary, CONCAT(m.first_name, " ", m.last_name) AS manager_name FROM employee e JOIN roles r ON r.id = e.role_id JOIN department d ON r.department_id = d.id LEFT JOIN employee AS m ON e.manager_id = m.id', function (err, results) {
+        if (err) console.log(err);
         console.table(results);
         init();
     })
+}
+
+const addDept = () => {
+    return inquirer
+        .prompt([{
+            type: 'input',
+            name: 'new_dept',
+            message: 'Please enter the name of the new department:'
+        }
+        ])
+        .then(data => {
+            let query = `INSERT INTO department (dept) VALUES ('${data.new_dept}')`;
+            db.query(query, function (err, results) {
+                if (err) console.log(err);
+                console.log(`Okay, ${data.new_dept} has been added`);
+                init();
+            })
+        }
+        )
 }
 
 function quit() {
