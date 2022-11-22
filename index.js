@@ -1,6 +1,6 @@
 //define module dependecies
 require('dotenv').config();
-const cTable = require('console.table');;
+require('console.table');
 const inquirer = require('inquirer');
 const mysql = require('mysql2')
 
@@ -21,7 +21,7 @@ const menu = [
         type: 'list',
         name: 'selection',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Quit']
     }
 ]
 
@@ -40,9 +40,9 @@ function init() {
             } else if (data.selection === 'View All Roles') {
                 console.log(`User selected to ${data.selection}`);
                 viewAllRoles();
-            } else if (data.selection === 'View All') {
+            } else if (data.selection === 'View All Employees') {
                 console.log(`User selected to ${data.selection}`);
-                viewAll();
+                viewAllEmployees();
             }
         })
         .catch(error => {
@@ -64,7 +64,7 @@ function viewAllRoles() {
     })
 }
 
-function viewAll() {
+function viewAllEmployees() {
     db.query('SELECT * FROM employee', function (err, results) {
         console.table(results);
         init();
