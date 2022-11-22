@@ -21,7 +21,7 @@ const menu = [
         type: 'list',
         name: 'selection',
         message: 'What would you like to do?',
-        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Quit']
+        choices: ['View All Departments', 'View All Roles', 'View All Employees', 'Add a Department', 'Add a Role', 'Add an Employee', 'Quit']
     }
 ]
 
@@ -47,6 +47,8 @@ function init() {
                 addDept();
             } else if (data.selection === 'Add a Role') {
                 addRole();
+            } else if (data.selection === 'Add an Employee') {
+                addEmployee();
             }
         })
         .catch(error => {
@@ -120,6 +122,40 @@ const addRole = () => {
             db.query(query, function (err, results) {
                 if (err) console.log(err);
                 console.log(`Okay, ${data.new_role} has been added`);
+                init();
+            })
+        }
+        )
+}
+
+const addEmployee = () => {
+    return inquirer
+        .prompt([{
+            type: 'input',
+            name: 'first',
+            message: 'Please enter the new employee\s first name:'
+        },
+        {
+            type: 'input',
+            name: 'last',
+            message: 'Please enter the new employee\s last name:'
+        },
+        {
+            type: 'input',
+            name: 'role_id',
+            message: 'Please enter the role ID for the new employee:'
+        },
+        {
+            type: 'input',
+            name: 'manager_id',
+            message: 'Please enter the manager ID for the new employee'
+        }
+        ])
+        .then(data => {
+            let query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${data.first}', '${data.last}', '${data.role_id}', '${data.manager_id}')`;
+            db.query(query, function (err, results) {
+                if (err) console.log(err);
+                console.log(`Okay, ${data.first} has been added`);
                 init();
             })
         }
