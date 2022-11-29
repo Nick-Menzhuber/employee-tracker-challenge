@@ -5,7 +5,7 @@
  
 ## Description 
 
-An application utilizing Inquirer and MySQL2 npms to view, add and update aspects of an employee database. 
+An application utilizing Inquirer and MySQL2 npms to view, add and update aspects of an employee database. Test
 
 See a video demo of the functionality at (https://watch.screencastify.com/v/YCQJMgsfwg99MZbEou1W)!
 
